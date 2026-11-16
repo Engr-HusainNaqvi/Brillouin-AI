@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brillouin Light-Dose Limits</title>
+<meta name="description" content="How close do Brillouin shift estimators get to the Cramér-Rao bound on real line-scan spectra as light is reduced? A CNN trained only on simulation stays near the bound where Lorentzian fits fail. Husain Naqvi, 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbfbfd;--fg:#14161a;--muted:#5b6170;--card:#ffffff;--line:#e6e8ee;--accent:#2563eb;--accent-soft:#e8efff;--warn:#b45309}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1116;--fg:#e8eaf0;--muted:#9aa1b2;--card:#161a22;--line:#262c38;--accent:#6ea0ff;--accent-soft:#1b2640;--warn:#f59e0b}}
+:root[data-theme="dark"]{--bg:#0e1116;--fg:#e8eaf0;--muted:#9aa1b2;--card:#161a22;--line:#262c38;--accent:#6ea0ff;--accent-soft:#1b2640;--warn:#f59e0b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 Inter,system-ui,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+header{padding:56px 0 28px;border-bottom:1px solid var(--line)}
+.kicker{color:var(--accent);font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:13px}
+h1{font-size:clamp(28px,5vw,44px);line-height:1.15;margin:.3em 0;font-weight:800}
+.lead{font-size:clamp(17px,2.4vw,20px);color:var(--muted);max-width:800px}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.btn{display:inline-block;padding:9px 16px;border-radius:8px;border:1px solid var(--line);color:var(--fg);text-decoration:none;font-weight:600;font-size:14px;background:var(--card)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+section{padding:36px 0;border-bottom:1px solid var(--line)}
+h2{font-size:24px;margin:0 0 12px}
+h3{font-size:18px;margin:22px 0 8px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:18px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.stat b{display:block;font-size:26px;color:var(--accent)}
+.stat span{color:var(--muted);font-size:13px}
+figure{margin:18px 0;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}
+figure img{width:100%;height:auto;display:block}
+figcaption{color:#555;font-size:13px;padding:6px 4px 0}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right}
+th:first-child,td:first-child{text-align:left}
+tr.best td{font-weight:700;color:var(--accent)}
+.note{background:var(--accent-soft);border-radius:10px;padding:14px 16px;margin:16px 0}
+.chain{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0}
+.chain span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:14px}
+.chain span.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.chain i{color:var(--muted);font-style:normal}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+footer{padding:28px 0 48px;color:var(--muted);font-size:14px}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<div class="kicker">Project 17 · Husain Naqvi · 2026</div>
+<h1>Brillouin-AI: how much light does a Brillouin microscope really need?</h1>
+<p class="lead">On 123,255 real line-scan Brillouin spectra (Bevilacqua et al. 2023), four ways of reading the Brillouin shift are compared with the Cramér-Rao bound as the light dose is cut from 100% to 2%. One of them is a 1D-CNN that never saw a real spectrum.</p>
+<div class="btns"><a class="btn primary" href="https://github.com/Engr-HusainNaqvi/Brillouin-AI">GitHub repository</a></div>
+</div></header>
+<main class="wrap">
+<section>
+<h2>Headline</h2>
+<div class="stats">
+<div class="stat"><b>0.87</b><span>efficiency of the standard noise-weighted fit at full light: already near-optimal</span></div>
+<div class="stat"><b>0.13 vs 0.51</b><span>efficiency at 10% light: weighted fit vs sim-trained CNN</span></div>
+<div class="stat"><b>1.7×</b><span>less light for the CNN to reach the weighted fit's 128 MHz error</span></div>
+<div class="stat"><b>23% vs 0.6%</b><span>fits vs CNN missing by more than 1 GHz at 2% light</span></div>
+<div class="stat"><b>2.5 µs</b><span>CNN time per spectrum (fit: 27 µs on the same GPU)</span></div>
+</div>
+<div class="chain"><span>495 raw frames</span><i>→</i><span>measured camera noise</span><i>→</i><span class="on">dose reduced to 2%</span><i>→</i><span>4 estimators</span><i>→</i><span class="on">vs Cramér-Rao bound</span></div>
+<div class="note"><b>Limits, stated plainly:</b>
+<ul>
+<li>On median error the gap is small at 10% light (57 vs 59 MHz). The CNN's main gain is robustness: it avoids catastrophic misfits.</li>
+<li>Low-light spectra are real line shapes with added simulated noise, not new recordings.</li>
+<li>One instrument, one agar sample. Cells and tissue are untested.</li>
+</ul></div>
+</section>
+<section>
+<h2>Shift error (RMSE, MHz)</h2>
+<div class="tbl"><table><thead><tr><th>Light dose</th><th>Cramér-Rao bound</th><th>1D-CNN (sim-trained)</th><th>Noise-weighted LSQ</th><th>Lorentzian LSQ</th><th>Centroid</th></tr></thead><tbody><tr><td>100%</td><td>23.2</td><td><b>24.9</b></td><td>24.9</td><td>27.3</td><td>54.6</td></tr><tr><td>50%</td><td>33.9</td><td><b>37.0</b></td><td>38.4</td><td>41.4</td><td>87.4</td></tr><tr><td>25%</td><td>50.7</td><td><b>59.8</b></td><td>80.7</td><td>83.8</td><td>147.5</td></tr><tr><td>10%</td><td>91.5</td><td><b>127.8</b></td><td>256.3</td><td>265.8</td><td>275.9</td></tr><tr><td>5%</td><td>151.8</td><td><b>211.7</b></td><td>481.0</td><td>495.9</td><td>401.6</td></tr><tr><td>2%</td><td>323.0</td><td><b>351.5</b></td><td>875.5</td><td>890.1</td><td>561.3</td></tr></tbody></table></div>
+</section>
+<section>
+<h2>Figures</h2>
+<figure><img loading="lazy" src="figures/fig1_precision_vs_dose.png" alt="Shift error (RMSE) against light dose on 123,249 real spectra. Dashed: Cramér-Rao bound. The CNN, trained only on simulated spectra, stays close to the bound; Lorentzian fits break down below about 25% light."><figcaption>Shift error (RMSE) against light dose on 123,249 real spectra. Dashed: Cramér-Rao bound. The CNN, trained only on simulated spectra, stays close to the bound; Lorentzian fits break down below about 25% light.</figcaption></figure><figure><img loading="lazy" src="figures/fig2_efficiency.png" alt="Statistical efficiency (CRB² / RMSE²). Above 0.8 at full light for both the weighted fit and the CNN; below 25% light the fits drop to about 0.1."><figcaption>Statistical efficiency (CRB² / RMSE²). Above 0.8 at full light for both the weighted fit and the CNN; below 25% light the fits drop to about 0.1.</figcaption></figure><figure><img loading="lazy" src="figures/fig3_reference.png" alt="Left: per-column reference separation (249 camera columns). Right: frame-to-frame scatter of the full-dose fit, the noise that sets the 100% row of the table."><figcaption>Left: per-column reference separation (249 camera columns). Right: frame-to-frame scatter of the full-dose fit, the noise that sets the 100% row of the table.</figcaption></figure>
+</section>
+</main>
+<footer><div class="wrap">© 2026 Husain Naqvi. All Rights Reserved. Data: Bevilacqua et al. 2023, Nature Methods (Zenodo 7525851), not redistributed. Research work.</div></footer>
+</body></html>
